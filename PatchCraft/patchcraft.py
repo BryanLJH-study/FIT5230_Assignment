@@ -348,7 +348,7 @@ class PatchCraftModel(nn.Module):
 class PatchCraftDetector:
   def __init__(self, model_path, device) -> None:
     self.device = device
-    self.model =  PatchCraftModel().to(device)
+    self.model = PatchCraftModel().to(device)
     self.model.load_state_dict(torch.load(model_path))
     self.model.eval()
 
@@ -357,7 +357,10 @@ class PatchCraftDetector:
     poor, rich = preprocess(img)
     poor = torch.from_numpy(poor).unsqueeze(0).float().to(self.device)
     rich = torch.from_numpy(rich).unsqueeze(0).float().to(self.device)
-    output = self.model(poor, rich)
-    prob = torch.sigmoid(output).item() 
+
+    # Pass the preprocessed image through the model
+    with torch.no_grad():
+      output = self.model.classify(poor, rich)
+      prob= torch.sigmoid(output).item()    # Get the probability of class 1
 
     return prob
