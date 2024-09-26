@@ -1,15 +1,12 @@
 import os
 import random as rand
-from datetime import datetime
 
 import numpy as np
 import cv2
 from scipy.ndimage import rotate
 
 import torch
-import torchvision
 import torch.nn as nn
-import torch.optim as optim
 
 
 def random_patches(img, num_patches=192, patch_size=32):
@@ -46,7 +43,6 @@ def combine_patches(patches, rows=8, cols=8):
     grid_img[y:y + patch_height, x:x + patch_width] = patch
 
   return grid_img
-
 
 def texture_diversity(patch):
   """
@@ -349,8 +345,8 @@ class PatchCraftDetector:
   def __init__(self, model_path, device) -> None:
     self.device = device
     self.model = PatchCraftModel().to(device)
-    self.model.load_state_dict(torch.load(model_path))
-    self.model.eval()
+    self.model.load_state_dict(torch.load(model_path, weights_only=True))
+    
 
 
   def classify(self, img):
@@ -358,9 +354,11 @@ class PatchCraftDetector:
     poor = torch.from_numpy(poor).unsqueeze(0).float().to(self.device)
     rich = torch.from_numpy(rich).unsqueeze(0).float().to(self.device)
 
+    self.model.eval()
+
     # Pass the preprocessed image through the model
     with torch.no_grad():
-      output = self.model.classify(poor, rich)
+      output = self.model(poor, rich)
       prob= torch.sigmoid(output).item()    # Get the probability of class 1
 
     return prob
