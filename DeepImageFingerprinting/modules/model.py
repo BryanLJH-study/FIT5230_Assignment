@@ -1,4 +1,4 @@
-from modules.basic_layers import *
+from DeepImageFingerprinting.modules.basic_layers import *
 from torch import nn
 
 

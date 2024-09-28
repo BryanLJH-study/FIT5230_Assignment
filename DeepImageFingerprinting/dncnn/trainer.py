@@ -1,7 +1,7 @@
 
 from torch import optim, nn
 import torch
-from dncnn.model import DnCNN
+from DeepImageFingerprinting.dncnn.model import DnCNN
 
 
 relu = nn.ReLU()
