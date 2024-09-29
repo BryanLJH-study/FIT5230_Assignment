@@ -345,7 +345,10 @@ class PatchCraftDetector:
   def __init__(self, model_path, device) -> None:
     self.device = device
     self.model = PatchCraftModel().to(device)
-    self.model.load_state_dict(torch.load(model_path, weights_only=True))
+    try:
+      self.model.load_state_dict(torch.load(model_path, weights_only=True))
+    except:
+       self.model.load_state_dict(torch.load(model_path, weights_only=True, map_location=torch.device('cpu')))
     
 
 
